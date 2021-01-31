@@ -1,3 +1,5 @@
+const path = require('path');
+
 const Settings = {
 	
 	server: {
@@ -8,6 +10,11 @@ const Settings = {
 	
 	api: {
 		base: '/api/v1'
+	},
+	
+	db: {
+		dialect: 'sqlite',
+		storage: path.resolve(__dirname + '../../../db/currencies.sqlite')
 	}
 	
 }

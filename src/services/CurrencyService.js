@@ -1,38 +1,40 @@
-const currencies = {
-	"inr": {
-		"iso_code": "INR",
+const { CurrencyModel } = require(`${global.baseDir}/models/CurrencyModel.js`),
+	  { Op } = require('sequelize');
+
+CurrencyModel.sync({
+	force: true
+}).then(() => {
+	return CurrencyModel.bulkCreate([{
+		"isoCode":  "inr",
 		"name": 	"Indian Rupee",
 		"symbol":	"₹",
 		"subunit": 	"Paisa",
-		"iso_numeric": "356",
+		"isoNumeric": "356",
 		"rate": 	72.91
-	},
-	"rub": {
-		"iso_code": "RUB",
+	}, {
+		"isoCode":  "rub",
 		"name": 	"Russian Ruble",
 		"symbol": 	"₽",
 		"subunit": 	"Kopeck",
-		"iso_numeric": "643",
+		"isoNumeric": "643",
 		"rate":		75.96
-	},
-	"usd": {
-		"iso_code": "USD",
+	}, {
+		"isoCode":  "usd",
 		"name": 	"United States Dollar",
 		"symbol": 	"$",
 		"subunit": 	"Cent",
-		"iso_numeric": "840",
+		"isoNumeric": "840",
 		"rate":		1.00
-	}
-};
+	}]);
+});
 
 class CurrencyService {
 	
 	async list () {
 		try {
-			const currency = Object
-			.values(currencies)
-			.sort((a, b) => a.iso_code.localeCompare(b.iso_code));
-			return [null, currency];
+			//Получить все строки таблицы
+			const currencies = await CurrencyModel.findAll();
+			return [null, currencies];
 		} catch (err) {
 			return [err, null];
 		}
@@ -40,10 +42,9 @@ class CurrencyService {
 	
 	async get (code) {
 		try {
-			if (currencies.hasOwnProperty(code)) {
-				return [null, currencies[code]];
-			}
-			return [null, null];
+			//Найти объект по первичному ключу
+			const currency = await CurrencyModel.findByPk(code);
+			return [null, currency];
 		} catch (err) {
 			return [err, null];
 		}
@@ -51,10 +52,20 @@ class CurrencyService {
 	
 	async create (currency) {
 		try {
-			if (currencies.hasOwnProperty(currency.iso_code.toLowerCase())) {
+			//Так как поля isoCode и name уникальны, то сначала проверяем на то, что они уже существуют
+			const exc = await CurrencyModel.findOne({ 
+				where: { 
+					[Op.or]: [{ 
+						isoCode: currency.isoCode 
+					}, { 
+						name: currency.name 
+					}] 
+				} 
+			});
+			if (exc) {
 				return [409, null];
 			}
-			currencies[currency.iso_code.toLowerCase()] = currency;
+			await CurrencyModel.create(currency);
 			return [null, null];
 		} catch (err) {
 			return [err, null];
@@ -63,8 +74,11 @@ class CurrencyService {
 	
 	async remove (code) {
 		try {
-			if (currencies.hasOwnProperty(code)) {
-				delete currencies[code];
+			//Для удаления объекта, сначала достаём его из базы
+			const exc = await CurrencyModel.findByPk(code);
+			if (exc) {
+				//После этого вызываем его метод удаления
+				await exc.destroy();
 				return [null, null];
 			}
 			return [404, null];
@@ -75,8 +89,13 @@ class CurrencyService {
 	
 	async update (code, { rate }) {
 		try {
-			if (currencies.hasOwnProperty(code)) {
-				currencies[code].rate = rate;
+			//Для изменения объекта сначала ищем его по первичному ключу
+			const exc = await CurrencyModel.findByPk(code);
+			if (exc) {
+				//Затем вносим изменения
+				exc.rate = rate;
+				//После чего сохраняем
+				await exc.save();
 				return [null, null];
 			}
 			return [404, null];

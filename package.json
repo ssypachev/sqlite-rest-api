@@ -5,7 +5,7 @@
   "main": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
-	"test:api": "mocha tests/api"
+    "test:api": "mocha tests/api"
   },
   "repository": {
     "type": "git",
@@ -22,7 +22,9 @@
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
     "express-async-errors": "^3.1.1",
-    "secval": "^1.9.2"
+    "secval": "^1.9.2",
+    "sequelize": "^6.5.0",
+    "sqlite3": "^5.0.1"
   },
   "devDependencies": {
     "chai": "^4.2.0",

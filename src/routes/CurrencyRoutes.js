@@ -25,11 +25,11 @@ module.exports = ({ app, BASE }) => {
 	app.post(`${BASE}`, async (req, res) => {
 		const [err, options] = new Validator()
 		.with(req.body)
-		.arg('iso_code').required.string.exactly(3).toLowerCase
+		.arg('isoCode').required.string.exactly(3).toLowerCase
 		.arg('name').required.string.min(1).max(200)
 		.arg('symbol').required.string
 		.arg('subunit').required.string.min(1).max(200)
-		.arg('iso_numeric').required.regular(/[0-9]+/)
+		.arg('isoNumeric').required.regular(/[0-9]+/)
 		.arg('rate').required.float.min(0.001)
 		.build();
 		
