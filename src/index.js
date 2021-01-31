@@ -4,14 +4,16 @@ const path = require('path');
 global.baseDir = path.resolve(__dirname);
 
 const express = require('express'),
-	  app     = express(); //это экземпляр сервера
+	  app     = express(), //это экземпляр сервера
+	  router  = require(`${global.baseDir}/routes/index.js`),
+	{ Settings } = require(`${global.baseDir}/options/Settings.js`);
 
 require('express-async-errors');
 
+router(app);
+
 (async () => {
-	const PORT = 3233;
-	
-	await app.listen(PORT);
-	console.log(`Server listening to ${PORT}`);
+	await app.listen(Settings.server.port);
+	console.log(`Server listening to ${Settings.server.schema}://${Settings.server.host}:${Settings.server.port}`);
 })();
 
