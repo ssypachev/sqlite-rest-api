@@ -5,7 +5,8 @@
   "main": "./src/index.js",
   "scripts": {
     "start": "node ./src/index.js",
-    "test:api": "mocha tests/api"
+    "test:api": "mocha tests/api",
+	"dbinit": "node ./src/create.db.js"
   },
   "repository": {
     "type": "git",
