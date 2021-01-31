@@ -1,49 +1,71 @@
-const { CurrencyService } = require(`${global.baseDir}/services/CurrencyService.js`);
+const { CurrencyController } = require(`${global.baseDir}/controllers/CurrencyController.js`),
+	  { Validator }          = require('secval');
 
 module.exports = ({ app, BASE }) => {
 	
 	BASE = BASE + '/currencies';
 	
 	app.get(`${BASE}`, async (req, res) => {
-		const list = await new CurrencyService().list();
-		return res.json(list);
+		return new CurrencyController().list(req, res);
 	});
 	
 	app.get(`${BASE}/:code([a-z]{3})`, async (req, res) => {
-		const code = req.params.code;
-		const currency = await new CurrencyService().get(code);
-		if (currency === null) {
-			return res.status(404).send(`Currency specified by code ${code} not found`);
+		const [err, options] = new Validator()
+		.with(req.params)
+		.arg('code').required.string.exactly(3).toLowerCase
+		.build();
+		
+		if (err) {
+			return res.sendErr(400, err);
 		}
-		return res.json(currency);
+
+		return new CurrencyController().get(req, res, options);
 	});
 	
 	app.post(`${BASE}`, async (req, res) => {
-		const currency = req.body;
-		const err = await new CurrencyService().create(currency);
-		if (err === 409) {
-			return res.status(409).send(`Duplicate entry. Currency ${req.body.iso_code} exists`);
+		const [err, options] = new Validator()
+		.with(req.body)
+		.arg('iso_code').required.string.exactly(3).toLowerCase
+		.arg('name').required.string.min(1).max(200)
+		.arg('symbol').required.string
+		.arg('subunit').required.string.min(1).max(200)
+		.arg('iso_numeric').required.regular(/[0-9]+/)
+		.arg('rate').required.float.min(0.001)
+		.build();
+		
+		if (err) {
+			return res.sendErr(400, err);
 		}
-		return res.json(true);
+		
+		return new CurrencyController().create(req, res, options);
 	});
 	
 	app.delete(`${BASE}/:code([a-z]{3})`, async (req, res) => {
-		const code = req.params.code;
-		const err = await new CurrencyService().remove(code);
-		if (err === 404) {
-			return res.status(404).send(`Currency specified by code ${code} not found`);
+		const [err, options] = new Validator()
+		.with(req.params)
+		.arg('code').required.string.exactly(3).toLowerCase
+		.build();
+		
+		if (err) {
+			return res.sendErr(400, err);
 		}
-		return res.json(true);
+
+		return new CurrencyController().remove(req, res, options);
 	});
 	
 	app.put(`${BASE}/:code([a-z]{3})`, async (req, res) => {
-		const code = req.params.code;
-		const rate = req.body.rate;
-		const err = await new CurrencyService().update(code, { rate });
-		if (err === 404) {
-			return res.status(404).send(`Currency specified by code ${code} not found`);
+		const [err, options] = new Validator()
+		.with(req.params)
+		.arg('code').required.string.exactly(3).toLowerCase
+		.with(req.body)
+		.arg('rate').required.float.min(0.001)
+		.build();
+		
+		if (err) {
+			return res.sendErr(400, err);
 		}
-		return res.json(true);
+
+		return new CurrencyController().update(req, res, options);
 	});
 	
 }

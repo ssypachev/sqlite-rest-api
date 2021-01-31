@@ -20,7 +20,8 @@
   "dependencies": {
     "body-parser": "^1.19.0",
     "express": "^4.17.1",
-    "express-async-errors": "^3.1.1"
+    "express-async-errors": "^3.1.1",
+    "secval": "^1.9.2"
   },
   "devDependencies": {
     "chai": "^4.2.0",
