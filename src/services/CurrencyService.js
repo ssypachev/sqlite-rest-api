@@ -28,40 +28,61 @@ const currencies = {
 class CurrencyService {
 	
 	async list () {
-		return Object
+		try {
+			const currency = Object
 			.values(currencies)
 			.sort((a, b) => a.iso_code.localeCompare(b.iso_code));
+			return [null, currency];
+		} catch (err) {
+			return [err, null];
+		}
 	}
 	
 	async get (code) {
-		if (currencies.hasOwnProperty(code)) {
-			return currencies[code];
+		try {
+			if (currencies.hasOwnProperty(code)) {
+				return [null, currencies[code]];
+			}
+			return [null, null];
+		} catch (err) {
+			return [err, null];
 		}
-		return null;
 	}
 	
 	async create (currency) {
-		if (currencies.hasOwnProperty(currency.iso_code.toLowerCase())) {
-			return 409;
+		try {
+			if (currencies.hasOwnProperty(currency.iso_code.toLowerCase())) {
+				return [409, null];
+			}
+			currencies[currency.iso_code.toLowerCase()] = currency;
+			return [null, null];
+		} catch (err) {
+			return [err, null];
 		}
-		currencies[currency.iso_code.toLowerCase()] = currency;
-		return null;
 	}
 	
 	async remove (code) {
-		if (currencies.hasOwnProperty(code)) {
-			delete currencies[code];
-			return null;
+		try {
+			if (currencies.hasOwnProperty(code)) {
+				delete currencies[code];
+				return [null, null];
+			}
+			return [404, null];
+		} catch (err) {
+			return [err, null];
 		}
-		return 404;
 	}
 	
 	async update (code, { rate }) {
-		if (currencies.hasOwnProperty(code)) {
-			currencies[code].rate = rate;
-			return null;
+		try {
+			if (currencies.hasOwnProperty(code)) {
+				currencies[code].rate = rate;
+				return [null, null];
+			}
+			return [404, null];
+		} catch (err) {
+			return [err, null];
 		}
-		return 404;
 	}
 	
 }
