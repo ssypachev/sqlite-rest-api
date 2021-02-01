@@ -15,6 +15,19 @@ const Settings = {
 	db: {
 		dialect: 'sqlite',
 		storage: path.resolve(__dirname + '../../../db/currencies.sqlite')
+	},
+	
+	logging: {
+		'index': { 
+			name: 'index',
+			streams: [{
+				path: path.resolve(__dirname + '../../../log/info.log'),
+				level: 'info'
+			}, {
+				path: path.resolve(__dirname + '../../../log/error.log'),
+				level: 'error'
+			}]
+		}
 	}
 	
 }
