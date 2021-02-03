@@ -13,10 +13,9 @@ const Settings = {
 	},
 	
 	db: {
-		/** Старые настройки базы для sqlite3
 		dialect: 'sqlite',
 		storage: path.resolve(__dirname + '../../../db/currencies.sqlite')
-		*/
+		/**
 		host: '127.0.0.1',
 		port: '3306',
 		user: 'sqlite_rest_api',
@@ -33,6 +32,7 @@ const Settings = {
 			max: 15,
 			idle: 30000
 		}
+		*/
 	},
 	
 	logging: {
