@@ -13,8 +13,26 @@ const Settings = {
 	},
 	
 	db: {
+		/** Старые настройки базы для sqlite3
 		dialect: 'sqlite',
 		storage: path.resolve(__dirname + '../../../db/currencies.sqlite')
+		*/
+		host: '127.0.0.1',
+		port: '3306',
+		user: 'sqlite_rest_api',
+		password: 'KgMmaA7QgX1qHZig',
+		dialect: 'mysql',
+		database: 'sqlite_rest_api',
+		dialectOptions: {
+			decimalNumbers: true,
+		},
+		timezone: '+05:00',
+		charset: 'utf8mb4',
+		pool: {
+			min: 5,
+			max: 15,
+			idle: 30000
+		}
 	},
 	
 	logging: {
