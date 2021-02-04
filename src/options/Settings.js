@@ -13,8 +13,14 @@ const Settings = {
 	},
 	
 	db: {
-		dialect: 'sqlite',
-		storage: path.resolve(__dirname + '../../../db/currencies.sqlite')
+		production: {
+			dialect: 'sqlite',
+			storage: path.resolve(__dirname + '../../../db/currencies-prod.sqlite')
+		},
+		development: {
+			dialect: 'sqlite',
+			storage: path.resolve(__dirname + '../../../db/currencies-dev.sqlite')
+		}
 		/**
 		host: '127.0.0.1',
 		port: '3306',
@@ -46,6 +52,10 @@ const Settings = {
 				level: 'error'
 			}]
 		}
+	},
+	
+	getDBSettings () {
+		return Settings.db[process.env.NODE_ENV];
 	}
 	
 }
